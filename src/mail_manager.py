@@ -50,7 +50,7 @@ class MailManager:
         spam_probability = self.spam_ai.get_email_spam_probability(message)
 
         # Set the message as SPAM
-        if spam_probability > int(os.getenv('SPAM_THRESHOLD', DEFAULT_SPAM_THRESHOLD)):
+        if spam_probability >= int(os.getenv('SPAM_THRESHOLD', DEFAULT_SPAM_THRESHOLD)):
           LOGGER.log(f'Email {message.subject[:LOGGER_SUBJECT_MAX_LENGTH]} is SPAM with a probability of {spam_probability}/10')
           message.mark_as_spam()
         else:

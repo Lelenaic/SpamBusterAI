@@ -42,9 +42,14 @@ class Mail:
 
 
   def get_subject(self) -> str:
-    subject = decode_header(self.raw_email['Subject'])[0][0]
+    header = decode_header(self.raw_email['Subject'])[0]
+    subject = header[0]
+    encoding = header[1]
+
     if isinstance(subject, bytes):
-      subject = subject.decode(decode_header(self.raw_email['Subject'])[0][1])
+        if encoding is None or encoding.lower() == 'unknown-8bit':
+            encoding = 'utf-8'
+        subject = subject.decode(encoding)
     
     return subject
 
