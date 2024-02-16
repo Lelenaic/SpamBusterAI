@@ -13,6 +13,7 @@ services:
       dockerfile: gpt4all_api/Dockerfile.buildkit
       args:
         DOCKER_BUILDKIT: 1
+    restart: unless-stopped
     volumes:
       - './gpt4all/gpt4all-api/gpt4all_api/app:/app'
       - './models:/models'
