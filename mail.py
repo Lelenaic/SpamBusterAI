@@ -77,7 +77,7 @@ class Mail:
     return message_content
 
   def html_to_text(self, html: str) -> str:
-    soup = BeautifulSoup(html)
+    soup = BeautifulSoup(html, 'lxml')
     return soup.get_text()
 
   def mark_as_spam(self) -> None:
