@@ -1,4 +1,5 @@
 init:
+	rm -rf gpt4all
 	git clone https://github.com/nomic-ai/gpt4all
 	docker compose build
 
