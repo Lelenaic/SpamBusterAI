@@ -1,11 +1,11 @@
 import os
-from mail import Mail
 from datetime import datetime
-from spam_ai import SpamAI
-from db import DB_INSTANCE
 from imaplib import IMAP4_SSL
-from logger import LOGGER
-from constants import LOGGER_SUBJECT_MAX_LENGTH, DEFAULT_SPAM_THRESHOLD
+from src.mail import Mail
+from src.spam_ai import SpamAI
+from src.db import DB_INSTANCE
+from src.logger import LOGGER
+from src.constants import LOGGER_SUBJECT_MAX_LENGTH, DEFAULT_SPAM_THRESHOLD
 
 class MailManager:
 

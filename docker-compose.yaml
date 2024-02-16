@@ -1,9 +1,26 @@
 version: '3.9'
 
 services:
-  spambuster:
+  spambusterai:
     image: lelenaic/spambusterai
     restart: unless-stopped
     env_file: .env
     extra_hosts:
       - "host.docker.internal:host-gateway"
+  gpt4all:
+    build:
+      context: gpt4all/gpt4all-api
+      dockerfile: gpt4all_api/Dockerfile.buildkit
+      args:
+        DOCKER_BUILDKIT: 1
+    volumes:
+      - './gpt4all/gpt4all-api/gpt4all_api/app:/app'
+      - './models:/models'
+    command: ["/start-reload.sh"]
+    environment:
+      - APP_ENVIRONMENT=dev
+      - WEB_CONCURRENCY=2
+      - LOGLEVEL=debug
+      - PORT=4891
+      - model=${AI_MODEL} # using variable from .env file
+      - inference_mode=cpu

@@ -1,6 +1,6 @@
 import os
 from datetime import datetime
-from constants import DEFAULT_LOG_LEVEL
+from src.constants import DEFAULT_LOG_LEVEL
 
 class Logger():
   def log(self, message, level: int = 1) -> None:

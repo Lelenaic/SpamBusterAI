@@ -2,8 +2,8 @@ import os
 from email.header import decode_header
 from email import message_from_bytes
 from bs4 import BeautifulSoup
-from logger import LOGGER
-from constants import GMAIL_IMAP_SERVER, LOGGER_SUBJECT_MAX_LENGTH
+from src.logger import LOGGER
+from src.constants import GMAIL_IMAP_SERVER, LOGGER_SUBJECT_MAX_LENGTH
 
 class Mail:
   def __init__(self, imap, id):

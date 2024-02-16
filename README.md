@@ -3,13 +3,18 @@ Welcome the SpamBusterAI. This project allows you to use any OpenAI compatible A
 
 Your inbox can finally be cleaned of those horrible cold mailing emails your current Anti-SPAM does not detect.
 
-This script can be run in Docker. It's privacy friendly as you can use local AI running on your computer.
+This app works well in Docker. It's privacy friendly as you can use local AI running on your computer.
 
-Every email is just handled once, you don't have to worry.
+Every email is just handled once, even if you restart the app (to avoid extra costs).
+
+You can run it locally or on a cloud server (if you wanna use a local AI, you'll need a GPU or an AVX compatible CPU)
 
 Table of contents:
 - [Installation](#installation)
 - [Configuration](#configuration)
+- [Using SpamBusterAI with local AI on CPU/GPU](#using-local-ai-on-cpugpu)
+- [Use a custom local AI model](#use-a-custom-local-ai-model)
+- [Troubleshooting](#troubleshooting)
 
 
 
@@ -19,18 +24,21 @@ Table of contents:
 
 Download the docker-compose.yaml file:
 
-`curl -O https://raw.githubusercontent.com/Lelenaic/SpamBusterAI/main/docker-compose.yaml`
+```
+curl -O https://raw.githubusercontent.com/Lelenaic/SpamBusterAI/main/docker-compose.yaml
+```
 
 Or
 
-`wget https://raw.githubusercontent.com/Lelenaic/SpamBusterAI/main/docker-compose.yaml`
+```
+wget https://raw.githubusercontent.com/Lelenaic/SpamBusterAI/main/docker-compose.yaml
+```
 
 Then create a .env file, and fill it from the configuration section below.
 
-Finally, start the container : `docker-compose up -d`
-
 
 ### Without docker
+
 Prerequisites:
 - Python 3.9+
 
@@ -46,8 +54,6 @@ pip install -r requirements.txt
 ```
 
 Then create a .env file, and fill it from the configuration section below.
-
-Finally, start the main file : `python app.py`
 
 
 # Configuration
@@ -100,4 +106,94 @@ LOG_LEVEL=1
 # The run interval in seconds
 # 300 means that the script will check for SPAM in your emails every 300 seconds
 RUN_INTERVAL=300
+
+# If you planned to use local AI on GPU, set your GPU brand here (nvidia or amd)
+GPU_TYPE=
 ```
+
+Then you can start SpamBusterAI:
+
+**If you wanna use local AI, do not start SpamBusterAI, [follow the local AI tuto](#using-local-ai-on-cpugpu) first.**
+
+Finally, start the main file:
+```
+# With docker
+docker-compose up -d spambusterai
+
+# Without docker
+python app.py
+```
+
+# Using local AI on CPU/GPU
+
+SpamBusterAI comes with [GPT4ALL API](https://github.com/nomic-ai/gpt4all) in the same docker-compose file. GPT4ALL allows an AI to run locally on CPU or GPU.
+
+I've added a Makefile to make it simple.
+
+First of all, we need to initialize GPT4ALL: `make init`
+
+Then, in your .env, make some changes:
+```
+OPENAI_BASE_URL=http://gpt4all:4891/v1
+
+# Set the model you wanna use here. It can only be a GPT4ALL model.
+# To use a custom model, see the "Use a custom local AI model" section
+AI_MODEL=mistral-7b-openorca.Q4_0
+```
+ 
+
+Then, you can run `make cpu` to run inference on your CPU or `make gpu` for the GPU version.
+You'll need to wait for the model to be downloaded. Depending on your bandwith, it can take some time.
+
+Check if the model is fully downloaded:
+```
+docker compose logs -f gpt4all
+```
+
+If there is an error, check your .env configuration and see the [Troubleshooting](#troubleshooting) section. 
+
+If the model is downloaded and the GPT4ALL API server in up, you can start SpamBusterAI.
+
+
+# Use a custom local AI model
+If you wanna use a custom model (not provided by GPT4ALL), you can juste download a GGUF file in the ./models folder.
+
+Then in your .env, change the `AI_MODEL` value to the file name without the `.gguf` extension.
+
+### Example with Microsoft Phi 2 model
+
+1. Download the model from : https://huggingface.co/TheBloke/phi-2-GGUF/blob/main/phi-2.Q4_K_M.gguf in the models folder
+
+2. Be sure the file `phi-2.Q4_K_M.gguf` is in the models folder.
+
+3. Change the .env variable `AI_MODEL` to `phi-2.Q4_K_M` (remove the file extension .gguf)
+
+4. `make cpu` or `make gpu` to restart the GPT4ALL container with the new model
+
+
+# Troubleshooting
+
+### Local AI does not start
+
+If your local model does not start, check the error logs :
+```
+docker compose logs -f gpt4all
+```
+
+If you see this error:
+```
+LLModel ERROR: CPU does not support AVX
+```
+
+You cannot run an AI on your CPU. Try the GPU version if you have one.
+
+
+### Mac ARM
+
+If you're on Mac ARM, you cannot use the docker local AI.
+You'll need to download GPT4ALL from the official website, and activate the API.
+
+1. Download it from: https://gpt4all.io/installers/gpt4all-installer-darwin.dmg
+2. Got in the settings in "Application" and check the "Enable API server" box
+3. In your .env, set `OPENAI_BASE_URL` to `http://host.docker.internal:4891/v1`
+4. Restart SpamBusterAI

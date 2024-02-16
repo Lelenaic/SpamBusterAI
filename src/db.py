@@ -1,5 +1,5 @@
 from pysondb import PysonDB
-from constants import DB_FILE_NAME
+from src.constants import DB_FILE_NAME
 
 class DB:
   def __init__(self):

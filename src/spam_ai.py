@@ -1,8 +1,8 @@
 import os
 from openai import OpenAI
-from mail import Mail
-from logger import LOGGER
-from constants import LOGGER_SUBJECT_MAX_LENGTH, DEFAULT_MAX_ATTRIBUTE_LENGTH, DEFAULT_OPENAI_BASE_URL
+from src.mail import Mail
+from src.logger import LOGGER
+from src.constants import LOGGER_SUBJECT_MAX_LENGTH, DEFAULT_MAX_ATTRIBUTE_LENGTH, DEFAULT_OPENAI_BASE_URL
 
 class SpamAI:
   

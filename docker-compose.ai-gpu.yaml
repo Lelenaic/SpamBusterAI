@@ -1,0 +1,12 @@
+version: '3.9'
+
+services:
+  gpt4all:
+    environment:
+      - inference_mode=gpu
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: ${GPU_TYPE:-nvidia}
+              capabilities: [gpu]
