@@ -34,7 +34,7 @@ Provide your response as a single integer.
     while not prob.isdigit() and i < int(os.getenv('MAX_TRIES', 3)):
       # There could be random errors, so to avoid cost of infinite retries, we will use a try/finally block
       try:
-        LOGGER.log(f'Requesting AI completion for email {mail.subject[:LOGGER_SUBJECT_MAX_LENGTH]} - {i}th try', 2)
+        LOGGER.log(f'Requesting AI completion for email {mail.subject[:LOGGER_SUBJECT_MAX_LENGTH]} - try {i+1}', 2)
         response = self.client.chat.completions.create(
             model = os.getenv('AI_MODEL'),
             messages = [
@@ -56,7 +56,7 @@ Provide your response as a single integer.
         )
         prob = response.choices[0].message.content.strip()
       except Exception as e:
-        LOGGER.log(f'Error requesting AI completion for email {mail.subject[:LOGGER_SUBJECT_MAX_LENGTH]} - {i}th try: {e}', 2)
+        LOGGER.log(f'Error requesting AI completion for email {mail.subject[:LOGGER_SUBJECT_MAX_LENGTH]} - try {i+1}: {e}', 2)
       finally:
         i += 1
 
