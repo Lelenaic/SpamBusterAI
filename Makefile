@@ -6,4 +6,4 @@ cpu:
 	docker compose up -d gpt4all
 
 gpu:
-	docker compose -f docker-compose.ai-gpu.yaml up -d
+	docker compose -f docker-compose.yaml -f docker-compose.ai-gpu.yaml up -d
