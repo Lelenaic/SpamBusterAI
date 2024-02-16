@@ -1,7 +1,9 @@
 import os
+import sched, time
 from dotenv import load_dotenv
 from mail_manager import MailManager
-from spam_ai import SpamAI
+from logger import LOGGER
+from constants import DEFAULT_RUN_INTERVAL
 
 load_dotenv()
 
@@ -18,10 +20,18 @@ REQUIRED_ENV_VARS = [
 
 def main() -> None:
   check_for_missing_env_var()
+  start()
 
+
+def start() -> None:
   with MailManager() as mail_manager:
     mail_manager.check_for_spam()
-
+  
+  interval = int(os.getenv('RUN_INTERVAL', DEFAULT_RUN_INTERVAL))
+  scheduler = sched.scheduler(time.time, time.sleep)
+  scheduler.enter(interval, 1, start, ())
+  LOGGER.log(f'Next run in {interval} seconds')
+  scheduler.run()
 
 def check_for_missing_env_var() -> None:
   for var in REQUIRED_ENV_VARS:
