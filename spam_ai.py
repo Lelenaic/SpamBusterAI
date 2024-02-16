@@ -1,15 +1,19 @@
+import os
 from openai import OpenAI
 from mail import Mail
-import os
+from logger import LOGGER
+from constants import LOGGER_SUBJECT_MAX_LENGTH, DEFAULT_MAX_ATTRIBUTE_LENGTH, DEFAULT_OPENAI_BASE_URL
 
 class SpamAI:
   
   def __init__(self):
-    self.client = OpenAI()
+    self.client = OpenAI({
+      "base_url": os.getenv('OPENAI_BASE_URL', DEFAULT_OPENAI_BASE_URL),
+    })
   
   def get_email_spam_probability(self, mail: Mail) -> int:
     # We limit every string to 100 characters to avoid long prompts and reduce costs
-    max_length = int(os.getenv('MAX_ATTRIBUTE_LENGTH', 100))
+    max_length = int(os.getenv('MAX_ATTRIBUTE_LENGTH', DEFAULT_MAX_ATTRIBUTE_LENGTH))
     prompt = f"""
     Considering only the information provided in the email below, assign a probability score representing whether it is SPAM, cold mailing, or phishing. The score should be an integer between 0 and 10, where 0 means definitely not SPAM, cold mailing, or phishing, and 10 means definitely SPAM, cold mailing, or phishing. Provide only the integer score as your response.
 
@@ -30,6 +34,7 @@ Provide your response as a single integer.
     while not prob.isdigit() and int(os.getenv('MAX_TRIES', 3)) < i:
       # There could be random errors, so to avoid cost of infinite retries, we will use a try/finally block
       try:
+        LOGGER.log(f"Requesting AI completion for email {mail.subject[:LOGGER_SUBJECT_MAX_LENGTH]} - {i}th try")
         response = self.client.chat.completions.create(
             model = os.getenv('AI_MODEL'),
             messages = [
@@ -50,7 +55,8 @@ Provide your response as a single integer.
             stream = False,
         )
         prob = response.choices[0].message.content.strip()
-      # We don't use the except block because we want to retry the request, whatever the error is
+      except Exception as e:
+        LOGGER.log(f"Error requesting AI completion for email {mail.subject[:LOGGER_SUBJECT_MAX_LENGTH]} - {i}th try: {e}", 2)
       finally:
         i += 1
 

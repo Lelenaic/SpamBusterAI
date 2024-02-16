@@ -1,9 +1,8 @@
 import os
 from email.header import decode_header
 from email import message_from_bytes
-
-GMAIL_IMAP_SERVER = 'imap.gmail.com'
-
+from logger import LOGGER
+from constants import GMAIL_IMAP_SERVER, LOGGER_SUBJECT_MAX_LENGTH
 
 class Mail:
   def __init__(self, imap, id):
@@ -69,6 +68,7 @@ class Mail:
 
 
   def mark_as_spam(self) -> None:
+    LOGGER.log(f"Marking email {self.subject[:LOGGER_SUBJECT_MAX_LENGTH]} as SPAM", 2)
     if os.getenv('HOST') == GMAIL_IMAP_SERVER:
       self.imap.store(self.id, '+X-GM-LABELS', '\\Spam')
 
@@ -76,3 +76,4 @@ class Mail:
     self.imap.copy(self.id, 'Spam')
     self.imap.store(self.id, '+FLAGS', '\\Deleted')
     self.imap.expunge()
+    LOGGER.log(f"Done marking email {self.subject[:LOGGER_SUBJECT_MAX_LENGTH]} as SPAM", 3)
