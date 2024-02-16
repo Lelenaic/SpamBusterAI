@@ -130,7 +130,14 @@ SpamBusterAI comes with [GPT4ALL API](https://github.com/nomic-ai/gpt4all) in th
 
 I've added a Makefile to make it simple.
 
-First of all, we need to initialize GPT4ALL: `make init`
+First of all, we need to initialize GPT4ALL:
+```
+git clone https://github.com/Lelenaic/SpamBusterAI
+cd SpamBusterAI
+make init
+```
+
+If you already configured your .env, move the file in the cloned repository, we'll use its docker-compose file.
 
 Then, in your .env, make some changes:
 ```
