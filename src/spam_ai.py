@@ -36,26 +36,17 @@ Provide your response as a single integer.
       # There could be random errors, so to avoid cost of infinite retries, we will use a try/finally block
       try:
         LOGGER.log(f'Requesting AI completion for email {mail.subject[:LOGGER_SUBJECT_MAX_LENGTH]} - try {i+1}', 2)
-        response = self.client.chat.completions.create(
+        response = self.client.completions.create(
             model = os.getenv('AI_MODEL'),
-            messages = [
-              {
-                'role': 'system',
-                # 'content': 'You are an email SPAM analyzer. Your task is to analyze the email and determine the probability it is a SPAM, cold mailing or phishing. Answer by giving an integer between 0 and 10. 0 means the email is not a SPAM, cold mailing or phishing. 10 means the email is a SPAM, cold mailing or phishing.',
-                'content': 'Given the content of the email, rate its likelihood of being SPAM, cold mailing, or phishing on a scale from 0 to 10, where 0 is not at all and 10 is definitely. Provide your response as a single integer.',
-              },
-              {
-                'role': 'user',
-                'content': prompt,
-              }
-            ],
+            prompt = prompt,
             max_tokens = 2,
             temperature = 0.1,
             top_p = 1,
             n = 1,
             stream = False,
         )
-        prob = response.choices[0].message.content.strip()
+        prob = response.choices[0].text.strip()
+        
       except Exception as e:
         LOGGER.log(f'Error requesting AI completion for email {mail.subject[:LOGGER_SUBJECT_MAX_LENGTH]} - try {i+1}: {e}')
         sleep(10)
