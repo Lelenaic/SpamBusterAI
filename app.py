@@ -26,7 +26,7 @@ def main() -> None:
 def check_for_missing_env_var() -> None:
   for var in REQUIRED_ENV_VARS:
     if var not in os.environ:
-      raise Exception(f"Missing required environment variable {var}")
+      raise Exception(f'Missing required environment variable {var}')
 
 
 if __name__ == '__main__':

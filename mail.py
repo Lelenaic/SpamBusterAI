@@ -9,9 +9,10 @@ class Mail:
     self.imap = imap
     self.id = id
     
+    LOGGER.log(f'Getting email {self.id} from IMAP server')
     # We get the status here because we wanna know if the email was unread before we read it
-    _, self.initial_status = self.imap.fetch(self.id, '(FLAGS)')
-    _, msg_data = self.imap.fetch(id, '(RFC822)')
+    _, self.initial_status = self.imap.uid('fetch', self.id, '(FLAGS)')
+    _, msg_data = self.imap.uid('fetch', self.id, '(RFC822)')
     # We use a for and if because the python imap library
     # returns multiple parts for an email, only the tuple part is the email
     # other parts are the email flags or metadata
@@ -27,22 +28,22 @@ class Mail:
           self.body = self.get_body()
 
           # Get the sender name
-          self.sender = self.raw_email["From"]
+          self.sender = self.raw_email['From']
 
           # Get the sender email address
-          self.sender_email = self.raw_email["Return-Path"]
+          self.sender_email = self.raw_email['Return-Path']
 
 
   def mark_as_unread(self) -> None:
     # Because we read the email to get the subject and body, if it was unread, mark it as unread, 
     if b'\\Seen' not in self.initial_status[0]:
-      self.imap.store(self.id, '-FLAGS', '\\Seen')
+      self.imap.uid('store', self.id, '-FLAGS', '\\Seen')
 
 
   def get_subject(self) -> str:
-    subject = decode_header(self.raw_email["Subject"])[0][0]
+    subject = decode_header(self.raw_email['Subject'])[0][0]
     if isinstance(subject, bytes):
-      subject = subject.decode(decode_header(self.raw_email["Subject"])[0][1])
+      subject = subject.decode(decode_header(self.raw_email['Subject'])[0][1])
     
     return subject
 
@@ -51,29 +52,31 @@ class Mail:
     if self.raw_email.is_multipart():
       for part in self.raw_email.walk():
         content_type = part.get_content_type()
-        content_disposition = str(part.get("Content-Disposition"))
+        content_disposition = str(part.get('Content-Disposition'))
         try:
           body = part.get_payload(decode=True).decode()
         except:
           pass
-        if content_type == "text/plain" and "attachment" not in content_disposition:
+        if content_type == 'text/plain' and 'attachment' not in content_disposition:
           message_content = body
+        print(content_type)
     else:
       content_type = self.raw_email.get_content_type()
       body = self.raw_email.get_payload(decode=True).decode()
-      if content_type == "text/plain":
+      if content_type == 'text/plain':
         message_content = body
+      print(content_type)
     
     return message_content
 
 
   def mark_as_spam(self) -> None:
-    LOGGER.log(f"Marking email {self.subject[:LOGGER_SUBJECT_MAX_LENGTH]} as SPAM", 2)
+    LOGGER.log(f'Marking email {self.subject[:LOGGER_SUBJECT_MAX_LENGTH]} as SPAM', 2)
     if os.getenv('HOST') == GMAIL_IMAP_SERVER:
-      self.imap.store(self.id, '+X-GM-LABELS', '\\Spam')
+      self.imap.uid('store', self.id, '+X-GM-LABELS', '\\Spam')
 
     # Move the email in spam folder
-    self.imap.copy(self.id, 'Spam')
-    self.imap.store(self.id, '+FLAGS', '\\Deleted')
+    self.imap.uid('copy', self.id, 'Spam')
+    self.imap.uid('store', self.id, '+FLAGS', '\\Deleted')
     self.imap.expunge()
-    LOGGER.log(f"Done marking email {self.subject[:LOGGER_SUBJECT_MAX_LENGTH]} as SPAM", 3)
+    LOGGER.log(f'Done marking email {self.subject[:LOGGER_SUBJECT_MAX_LENGTH]} as SPAM', 3)
