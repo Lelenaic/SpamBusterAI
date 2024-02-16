@@ -149,7 +149,15 @@ AI_MODEL=mistral-7b-openorca.Q4_0
 ```
  
 
-Then, you can run `make cpu` to run inference on your CPU or `make gpu` for the GPU version.
+Then, to run inference on your CPU you can run:
+```
+make cpu
+```
+Or to run on the GPU:
+```
+make gpu
+```
+
 You'll need to wait for the model to be downloaded. Depending on your bandwith, it can take some time.
 
 Check if the model is fully downloaded:
