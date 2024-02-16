@@ -5,3 +5,8 @@ This project allows your inbox to be cleared of cold mailing and horrible things
 
 
 # Installation
+
+Just download the docker-compose.yaml file:
+``
+
+# Configuration
