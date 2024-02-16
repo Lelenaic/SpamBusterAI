@@ -34,7 +34,7 @@ class Mail:
           self.sender_email = self.raw_email["Return-Path"]
 
 
-  def mark_as_unread(self):
+  def mark_as_unread(self) -> None:
     # Because we read the email to get the subject and body, if it was unread, mark it as unread, 
     if b'\\Seen' not in self.initial_status[0]:
       self.imap.store(self.id, '-FLAGS', '\\Seen')
@@ -69,7 +69,6 @@ class Mail:
 
 
   def mark_as_spam(self) -> None:
-    self.imap.store(self.id, '+FLAGS', '\\Flagged')
     if os.getenv('HOST') == GMAIL_IMAP_SERVER:
       self.imap.store(self.id, '+X-GM-LABELS', '\\Spam')
 

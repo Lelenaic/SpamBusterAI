@@ -27,7 +27,7 @@ class MailManager:
     self.imap.logout()
 
 
-  def check_for_spam(self):
+  def check_for_spam(self) -> None:
     today = datetime.today().strftime('%d-%b-%Y')
     # Get today's emails
     _, data = self.imap.search(None, 'ON', today)
