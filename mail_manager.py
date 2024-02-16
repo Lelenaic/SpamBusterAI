@@ -41,7 +41,6 @@ class MailManager:
       if spam_probability > int(os.getenv('SPAM_THRESHOLD', 8)):
         message.mark_as_spam()
 
-      print(spam_probability)
 
 
   def get_email_spam_probability(self, mail: Mail) -> int:
