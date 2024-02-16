@@ -133,11 +133,10 @@ RUN_INTERVAL=300
 GPU_TYPE=
 ```
 
-Then you can start SpamBusterAI:
-
 **If you wanna use local AI, do not start SpamBusterAI, [follow the local AI tuto](#using-local-ai-on-cpugpu) first.**
 
-Finally, start the main file:
+Then you can start SpamBusterAI:
+
 ```
 # With docker
 docker-compose up -d spambusterai
