@@ -1,4 +1,6 @@
 # SpamBusterAI
+[Github Repository](https://github.com/Lelenaic/SpamBusterAI) - [Docker Hub](https://hub.docker.com/r/lelenaic/spambusterai)
+
 Welcome the SpamBusterAI. This project allows you to use any OpenAI compatible AI to analyse every email you receive and mark them as SPAM depending on a SPAM Score.
 
 Your inbox can finally be cleaned of those horrible cold mailing emails your current Anti-SPAM does not detect.
