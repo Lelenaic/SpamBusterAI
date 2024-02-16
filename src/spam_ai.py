@@ -1,4 +1,5 @@
 import os
+from time import sleep
 from openai import OpenAI
 from src.mail import Mail
 from src.logger import LOGGER
@@ -56,7 +57,8 @@ Provide your response as a single integer.
         )
         prob = response.choices[0].message.content.strip()
       except Exception as e:
-        LOGGER.log(f'Error requesting AI completion for email {mail.subject[:LOGGER_SUBJECT_MAX_LENGTH]} - try {i+1}: {e}', 2)
+        LOGGER.log(f'Error requesting AI completion for email {mail.subject[:LOGGER_SUBJECT_MAX_LENGTH]} - try {i+1}: {e}')
+        sleep(10)
       finally:
         i += 1
 
