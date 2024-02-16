@@ -1,9 +1,9 @@
 import os
 import sched, time
 from dotenv import load_dotenv
-from mail_manager import MailManager
-from logger import LOGGER
-from constants import DEFAULT_RUN_INTERVAL
+from src.mail_manager import MailManager
+from src.logger import LOGGER
+from src.constants import DEFAULT_RUN_INTERVAL
 
 load_dotenv()
 
