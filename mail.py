@@ -1,6 +1,7 @@
 import os
 from email.header import decode_header
 from email import message_from_bytes
+from bs4 import BeautifulSoup
 from logger import LOGGER
 from constants import GMAIL_IMAP_SERVER, LOGGER_SUBJECT_MAX_LENGTH
 
@@ -50,6 +51,7 @@ class Mail:
 
   def get_body(self) -> str:
     if self.raw_email.is_multipart():
+      # The mail is in multiple parts
       for part in self.raw_email.walk():
         content_type = part.get_content_type()
         content_disposition = str(part.get('Content-Disposition'))
@@ -59,16 +61,24 @@ class Mail:
           pass
         if content_type == 'text/plain' and 'attachment' not in content_disposition:
           message_content = body
-        print(content_type)
+        elif content_type == 'text/html' and 'attachment' not in content_disposition:
+          message_content = self.html_to_text(body)
     else:
+      # The mail is only one part, so decode it and get the text
       content_type = self.raw_email.get_content_type()
       body = self.raw_email.get_payload(decode=True).decode()
+      # If it's only text, juste get it
       if content_type == 'text/plain':
         message_content = body
-      print(content_type)
+      # It's HTML, so transform it into text
+      elif content_type == 'text/html':
+        message_content = self.html_to_text(body)
     
     return message_content
 
+  def html_to_text(self, html: str) -> str:
+    soup = BeautifulSoup(html)
+    return soup.get_text()
 
   def mark_as_spam(self) -> None:
     LOGGER.log(f'Marking email {self.subject[:LOGGER_SUBJECT_MAX_LENGTH]} as SPAM', 2)

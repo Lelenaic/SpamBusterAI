@@ -23,6 +23,7 @@ class SpamAI:
 
 
 
+END OF EMAIL BODY
 Provide your response as a single integer.
 '''
     prob = ''
