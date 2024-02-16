@@ -17,6 +17,28 @@ Table of contents:
 - [Troubleshooting](#troubleshooting)
 
 
+OS compatibility:
+* Mac ARM:
+  - SpamBusterAI in docker ✅
+  - SpamBusterAI without docker ✅
+  - GPT4ALL in docker ❌
+  - GPT4ALL installed on OS ✅
+* Mac Intel:
+  - SpamBusterAI in docker ✅
+  - SpamBusterAI without docker ✅
+  - GPT4ALL in docker ❓
+  - GPT4ALL installed on OS ✅
+* Windows:
+  - SpamBusterAI in docker ✅
+  - SpamBusterAI without docker ✅
+  - GPT4ALL in docker ✅
+  - GPT4ALL installed on OS ✅
+* Linux:
+  - SpamBusterAI in docker ✅
+  - SpamBusterAI without docker ✅
+  - GPT4ALL in docker ✅
+  - GPT4ALL installed on OS ✅
+
 
 # Installation
 
