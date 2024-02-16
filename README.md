@@ -164,6 +164,11 @@ Check if the model is fully downloaded:
 ```
 docker compose logs -f gpt4all
 ```
+You should see a message like this one when it's ready:
+```
+gpt4all-1  | [2024-02-16 22:39:41,309 8:MainThread] main - INFO - GPT4All API is ready to infer from mistral-7b-openorca.Q4_0 on CPU. | main.py:42
+gpt4all-1  | INFO:     Application startup complete.
+```
 
 If there is an error, check your .env configuration and see the [Troubleshooting](#troubleshooting) section. 
 
