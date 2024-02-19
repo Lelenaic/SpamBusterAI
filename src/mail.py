@@ -2,6 +2,7 @@ import os
 from email.header import decode_header
 from email import message_from_bytes
 from bs4 import BeautifulSoup
+import html2text
 from src.logger import LOGGER
 from src.constants import GMAIL_IMAP_SERVER, LOGGER_SUBJECT_MAX_LENGTH
 
@@ -82,8 +83,11 @@ class Mail:
     return message_content
 
   def html_to_text(self, html: str) -> str:
-    soup = BeautifulSoup(html, 'lxml')
-    return soup.get_text()
+    h = html2text.HTML2Text()
+    h.ignore_links = False
+    return h.handle(html)
+    # soup = BeautifulSoup(html, 'lxml')
+    # return soup.get_text()
 
   def mark_as_spam(self) -> None:
     LOGGER.log(f'Marking email {self.subject[:LOGGER_SUBJECT_MAX_LENGTH]} as SPAM', 2)
